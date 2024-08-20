@@ -10,13 +10,20 @@ list_box = sg.Listbox(key='todos',
                       values=functions.get_todos(),
                       enable_events=True,
                       size=[45,10])
+
 edit_button = sg.Button("Edit")
 
+complete_button = sg.Button("Complete")
+
+exit_button = sg.Button('Exit')
+layout = [[label],
+          [input_box, add_button],
+          [list_box, edit_button, complete_button],
+          [exit_button]]
 window = sg.Window("My To-Do App",
-                   layout=[[label],
-                           [input_box, add_button],
-                           [list_box, edit_button]],
+                   layout=layout,
                    font=('Helvetica', 12))
+
 while True:
     event, values = window.read()
     print(1, event)
@@ -33,7 +40,7 @@ while True:
 
         case "Edit":
             """ Logic:
-            - Lấy 2 gia tri moi va cu
+            - Lay 2 gia tri moi va cu
             - Mo file chua list replace
             """
             # Get value and convert it to string
@@ -55,11 +62,24 @@ while True:
             # Make it real-time
             window['todos'].update(values=todos)
 
+
+        case "Complete":
+            todo_to_complete = values["todos"][0]
+            todos = functions.get_todos()
+            todos.remove(todo_to_complete)
+            functions.write_todos(todos)
+
+            window['todos'].update(values=todos)
+            window['todo'].update(value='')
+
+        case "Exit":
+            break
         # Show selection and make it real-time
         case "todos":
             window['todo'].update(value=values['todos'][0])
 
         case sg.WINDOW_CLOSED:
             break
+            # break hoac exit neu muon dung hoan toan
 
 window.close()
